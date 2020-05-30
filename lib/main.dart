@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 BleManager bleManager;
+
 void main() {
   bleManager = BleManager();
   runApp(MyApp());
@@ -55,6 +57,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  var _controller = TextEditingController();
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -66,19 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
-
-  void _testBle() async{
-     await bleManager.createClient();
-     bleManager.startPeripheralScan(allowDuplicates: false)
-     .listen((scanResult) async {
-       if (scanResult.peripheral.name == "BOB-01"){
-         print("#################### scanned ${scanResult.toString()}");
-         bleManager.stopPeripheralScan();
-         await scanResult.peripheral.connect();
-         await scanResult.peripheral.discoverAllServicesAndCharacteristics();
-       }
-     });
+  void _testBle() async {
+    await bleManager.createClient();
+    bleManager
+        .startPeripheralScan(allowDuplicates: false)
+        .listen((scanResult) async {
+      if (scanResult.peripheral.name == "BOB-01") {
+        print("############ scanned ${scanResult.toString()}");
+        bleManager.stopPeripheralScan();
+        await scanResult.peripheral.connect();
+        await scanResult.peripheral.discoverAllServicesAndCharacteristics();
+      }
+    });
   }
 
   @override
@@ -96,42 +99,64 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(4),
+                  alignment: Alignment.topLeft,
+                  child: Text("Address-Hex:", textAlign: TextAlign.start),
+                ),
+                Container(
+                  width: 150,
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "This is hint text"),
+                  ),
+                ),
+                Container(
+                  width: 150,
+                  child: RaisedButton(
+                    onPressed: () {},
+                    child: Text("WRITE"),
+                  ),
+                )
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline4,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(4),
+                  alignment: Alignment.topLeft,
+                  child: Text("Value-Hex:", textAlign: TextAlign.start),
+                ),
+                Container(
+                  width: 150,
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "This is hint text"),
+                  ),
+                ),
+                Container(
+                  width: 150,
+                  child: RaisedButton(
+                    onPressed: () {},
+                    child: Text("READ"),
+                  ),
+                )
+
+              ],
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _testBle,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
